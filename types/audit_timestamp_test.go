@@ -9,9 +9,22 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-func TestCreatedAt_JSONEncoding(t *testing.T
-func TestCreatedAt_JSONEncoding(t *testing.T
-func TestCreatedAt_JSONEncoding(t *testing.T
+
+	"github.com/marcelofabianov/gobrick/msg"
+	"github.com/marcelofabianov/gobrick/types"
+)
+
+func TestNewCreatedAt(t *testing.T) {
+	ca := types.NewCreatedAt()
+	assert.WithinDuration(t, time.Now(), ca.Time(), time.Second, "NewCreatedAt() time should be current")
+}
+
+func TestCreatedAt_Time(t *testing.T) {
+	now := time.Now()
+	ca := types.CreatedAt(now)
+	assert.True(t, now.Equal(ca.Time()), "Time() should return the underlying time.Time")
+}
+
 func TestCreatedAt_JSONEncoding(t *testing.T) {
 	specificTime := time.Date(2024, 5, 22, 10, 30, 0, 123456789, time.UTC)
 	ca := types.CreatedAt(specificTime)
