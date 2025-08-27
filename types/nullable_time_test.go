@@ -143,6 +143,24 @@ func TestNullableTime_DatabaseEncoding(t *testing.T) {
 	})
 }
 
+func TestNullableTime_IsZero(t *testing.T) {
+	t.Run("Valid NullableTime with non-zero time", func(t *testing.T) {
+		now := time.Now()
+		nt := types.NewNullableTime(now, true)
+		assert.False(t, nt.IsZero(), "IsZero should return false for valid NullableTime with non-zero time")
+	})
+
+	t.Run("Valid NullableTime with zero time", func(t *testing.T) {
+		nt := types.NewNullableTime(time.Time{}, true)
+		assert.True(t, nt.IsZero(), "IsZero should return true for valid NullableTime with zero time")
+	})
+
+	t.Run("Invalid NullableTime", func(t *testing.T) {
+		nt := types.NewNullableTime(time.Time{}, false)
+		assert.True(t, nt.IsZero(), "IsZero should return true for invalid NullableTime")
+	})
+}
+
 func TestDeletedAt_Methods(t *testing.T) {
 	t.Run("NewDeletedAtNow", func(t *testing.T) {
 		da := types.NewDeletedAtNow()
@@ -183,6 +201,23 @@ func TestDeletedAt_Methods(t *testing.T) {
 	})
 }
 
+func TestDeletedAt_IsZero(t *testing.T) {
+	t.Run("Valid DeletedAt with non-zero time", func(t *testing.T) {
+		da := types.NewDeletedAtNow()
+		assert.False(t, da.IsZero(), "IsZero should return false for valid DeletedAt with non-zero time")
+	})
+
+	t.Run("Valid DeletedAt with zero time", func(t *testing.T) {
+		da := types.DeletedAt{NullableTime: types.NewNullableTime(time.Time{}, true)}
+		assert.True(t, da.IsZero(), "IsZero should return true for valid DeletedAt with zero time")
+	})
+
+	t.Run("Invalid DeletedAt", func(t *testing.T) {
+		da := types.NewNilDeletedAt()
+		assert.True(t, da.IsZero(), "IsZero should return true for invalid DeletedAt")
+	})
+}
+
 func TestArchivedAt_Methods(t *testing.T) {
 	t.Run("NewArchivedAtNow", func(t *testing.T) {
 		aa := types.NewArchivedAtNow()
@@ -220,5 +255,22 @@ func TestArchivedAt_Methods(t *testing.T) {
 		jsonDataNil, err := json.Marshal(aaNil)
 		require.NoError(t, err, "json.Marshal for nil ArchivedAt should not error")
 		assert.Equal(t, "null", string(jsonDataNil), "JSON for nil ArchivedAt should be 'null'")
+	})
+}
+
+func TestArchivedAt_IsZero(t *testing.T) {
+	t.Run("Valid ArchivedAt with non-zero time", func(t *testing.T) {
+		aa := types.NewArchivedAtNow()
+		assert.False(t, aa.IsZero(), "IsZero should return false for valid ArchivedAt with non-zero time")
+	})
+
+	t.Run("Valid ArchivedAt with zero time", func(t *testing.T) {
+		aa := types.ArchivedAt{NullableTime: types.NewNullableTime(time.Time{}, true)}
+		assert.True(t, aa.IsZero(), "IsZero should return true for valid ArchivedAt with zero time")
+	})
+
+	t.Run("Invalid ArchivedAt", func(t *testing.T) {
+		aa := types.NewNilArchivedAt()
+		assert.True(t, aa.IsZero(), "IsZero should return true for invalid ArchivedAt")
 	})
 }

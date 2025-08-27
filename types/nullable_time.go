@@ -73,6 +73,10 @@ func (nt NullableTime) IsNullable() bool {
 	return !nt.Valid
 }
 
+func (nt NullableTime) IsZero() bool {
+	return nt.Time.IsZero()
+}
+
 type DeletedAt struct {
 	NullableTime
 }
@@ -94,6 +98,10 @@ func (da *DeletedAt) IsNullable() bool {
 	return !da.Valid
 }
 
+func (da *DeletedAt) IsZero() bool {
+	return da.Time.IsZero()
+}
+
 type ArchivedAt struct {
 	NullableTime
 }
@@ -113,4 +121,8 @@ func (aa *ArchivedAt) SetNow() {
 
 func (aa *ArchivedAt) IsNullable() bool {
 	return !aa.Valid
+}
+
+func (aa *ArchivedAt) IsZero() bool {
+	return aa.Time.IsZero()
 }
