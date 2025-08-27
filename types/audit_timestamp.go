@@ -111,6 +111,10 @@ func (ca *CreatedAt) Scan(src interface{}) error {
 	}
 }
 
+func (ca CreatedAt) IsZero() bool {
+	return time.Time(ca).IsZero()
+}
+
 type UpdatedAt time.Time
 
 func NewUpdatedAt() UpdatedAt        { return UpdatedAt(time.Now()) }
@@ -178,4 +182,8 @@ func (ua *UpdatedAt) Scan(src interface{}) error {
 			message,
 		)
 	}
+}
+
+func (ua UpdatedAt) IsZero() bool {
+	return time.Time(ua).IsZero()
 }

@@ -117,6 +117,19 @@ func TestCreatedAt_DatabaseEncoding(t *testing.T) {
 	}
 }
 
+func TestCreatedAt_IsZero(t *testing.T) {
+	t.Run("Zero time", func(t *testing.T) {
+		var ca types.CreatedAt // Zero value of CreatedAt
+		assert.True(t, ca.IsZero(), "IsZero() should return true for zero CreatedAt")
+	})
+
+	t.Run("Non-zero time", func(t *testing.T) {
+		specificTime := time.Date(2024, 5, 22, 10, 30, 0, 123456789, time.UTC)
+		ca := types.CreatedAt(specificTime)
+		assert.False(t, ca.IsZero(), "IsZero() should return false for non-zero CreatedAt")
+	})
+}
+
 func TestNewUpdatedAt(t *testing.T) {
 	ua := types.NewUpdatedAt()
 	assert.WithinDuration(t, time.Now(), ua.Time(), time.Second, "NewUpdatedAt() time should be current")
@@ -216,4 +229,17 @@ func TestUpdatedAt_DatabaseEncoding(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestUpdatedAt_IsZero(t *testing.T) {
+	t.Run("Zero time", func(t *testing.T) {
+		var ua types.UpdatedAt // Zero value of UpdatedAt
+		assert.True(t, ua.IsZero(), "IsZero() should return true for zero UpdatedAt")
+	})
+
+	t.Run("Non-zero time", func(t *testing.T) {
+		specificTime := time.Date(2024, 5, 23, 11, 0, 0, 987654321, time.UTC)
+		ua := types.UpdatedAt(specificTime)
+		assert.False(t, ua.IsZero(), "IsZero() should return false for non-zero UpdatedAt")
+	})
 }
