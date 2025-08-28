@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 var ErrInvalidDay = fmt.Errorf("day must be between 1 and 31")
@@ -19,6 +20,38 @@ func NewDay(value int) (Day, error) {
 
 func (d Day) Int() int {
 	return int(d)
+}
+
+// HasPassed verifica se este dia já passou no mês corrente.
+func (d Day) HasPassed(today time.Time) bool {
+	return d.Int() < today.Day()
+}
+
+// DaysUntil calcula quantos dias faltam para a próxima ocorrência deste dia.
+func (d Day) DaysUntil(today time.Time) int {
+	day := d.Int()
+	todayDay := today.Day()
+
+	if day >= todayDay {
+		return day - todayDay
+	}
+
+	daysInMonth := time.Date(today.Year(), today.Month()+1, 0, 0, 0, 0, 0, today.Location()).Day()
+	return (daysInMonth - todayDay) + day
+}
+
+// DaysOverdue calcula quantos dias se passaram desde a última ocorrência deste dia.
+func (d Day) DaysOverdue(today time.Time) int {
+	day := d.Int()
+	todayDay := today.Day()
+
+	if day <= todayDay {
+		return todayDay - day
+	}
+
+	prevMonth := today.AddDate(0, -1, 0)
+	daysInPrevMonth := time.Date(prevMonth.Year(), prevMonth.Month()+1, 0, 0, 0, 0, 0, today.Location()).Day()
+	return (daysInPrevMonth - day) + todayDay
 }
 
 func (d Day) MarshalJSON() ([]byte, error) {
